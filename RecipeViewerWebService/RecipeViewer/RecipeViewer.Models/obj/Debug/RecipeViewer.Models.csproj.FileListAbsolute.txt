@@ -1,0 +1,16 @@
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\RecipeViewer.Models.dll.config
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\RecipeViewer.Models.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\RecipeViewer.Models.pdb
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\EntityFramework.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\EntityFramework.SqlServer.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\MySql.Data.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\mysql.data.entity.EF6.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\EntityFramework.xml
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\EntityFramework.SqlServer.xml
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\obj\Debug\RecipeViewer.Models.csprojResolveAssemblyReference.cache
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\obj\Debug\RecipeViewer.Models.dll
+c:\Users\plt3ch\Documents\visualstudio2013\Projects\RecipeViewer\RecipeViewer.Models\obj\Debug\RecipeViewer.Models.pdb

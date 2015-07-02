@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeViewer.Data", "RecipeViewer.Data\RecipeViewer.Data.csproj", "{A3B65ABF-8566-4113-87EE-25E330160E58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeViewer.Models", "RecipeViewer.Models\RecipeViewer.Models.csproj", "{2342904F-1BBF-4FFD-A571-A7CD2F6D0656}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeViewer.Web", "RecipeViewer.Web\RecipeViewer.Web.csproj", "{12C5B1CC-D151-4DF1-A25F-BDC7ED9F9182}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3B65ABF-8566-4113-87EE-25E330160E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B65ABF-8566-4113-87EE-25E330160E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B65ABF-8566-4113-87EE-25E330160E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B65ABF-8566-4113-87EE-25E330160E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2342904F-1BBF-4FFD-A571-A7CD2F6D0656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2342904F-1BBF-4FFD-A571-A7CD2F6D0656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2342904F-1BBF-4FFD-A571-A7CD2F6D0656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2342904F-1BBF-4FFD-A571-A7CD2F6D0656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12C5B1CC-D151-4DF1-A25F-BDC7ED9F9182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12C5B1CC-D151-4DF1-A25F-BDC7ED9F9182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12C5B1CC-D151-4DF1-A25F-BDC7ED9F9182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12C5B1CC-D151-4DF1-A25F-BDC7ED9F9182}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
