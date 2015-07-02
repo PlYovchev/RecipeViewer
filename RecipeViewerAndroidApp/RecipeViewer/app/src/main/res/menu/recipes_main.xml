@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.plt3ch.recipeviewer.Activities.RecipesMainActivity">
+    <item android:id="@+id/action_search"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="collapseActionView|ifRoom"
+        app:actionViewClass="android.widget.SearchView" />
+    <item android:id="@+id/action_filterby_title" android:title="@string/filter_by_title"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_filterby_author" android:title="@string/filter_by_author"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_filterby_ingredient" android:title="@string/filter_by_ingredient"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_filterby_rating" android:title="@string/filter_by_rating"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_configure_search" android:title="@string/action_configure_search"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.plt3ch.recipeviewer.ActivatedRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/list_selector">
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/recipeImageView"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/titleTextView"
+        android:layout_alignTop="@+id/recipeImageView"
+        android:layout_toRightOf="@+id/recipeImageView"
+        android:layout_toEndOf="@+id/recipeImageView"
+        android:layout_marginLeft="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/authorTextView"
+        android:layout_alignBottom="@+id/recipeImageView"
+        android:layout_alignLeft="@+id/titleTextView"
+        android:layout_alignStart="@+id/titleTextView" />
+
+
+    <RatingBar
+        android:id="@+id/recipeRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:rating="2.0"
+        android:isIndicator="true"
+        style="@style/starRatingBarSmall"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:layout_alignTop="@+id/titleTextView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="at date"
+        android:id="@+id/publishDateTextView"
+        android:layout_alignTop="@+id/authorTextView"
+        android:layout_toRightOf="@+id/authorTextView"
+        android:layout_toEndOf="@+id/authorTextView"
+        android:layout_marginLeft="10dp"/>
+
+</com.plt3ch.recipeviewer.ActivatedRelativeLayout>
