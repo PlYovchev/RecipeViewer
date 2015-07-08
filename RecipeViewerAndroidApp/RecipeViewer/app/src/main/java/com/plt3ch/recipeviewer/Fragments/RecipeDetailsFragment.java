@@ -1,22 +1,30 @@
 package com.plt3ch.recipeviewer.Fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.plt3ch.recipeviewer.Activities.RecipesMainActivity;
 import com.plt3ch.recipeviewer.Adapters.IngredientsAdapter;
 import com.plt3ch.recipeviewer.Adapters.RecipesAdapter;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
+import com.plt3ch.recipeviewer.Controllers.RecipeViewerDatabase;
+import com.plt3ch.recipeviewer.Dialogs.ConfigureSearchDialog;
+import com.plt3ch.recipeviewer.FilterByType;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.R;
@@ -27,6 +35,7 @@ public class RecipeDetailsFragment extends Fragment {
 
     private Recipe selectedRecipe;
     private ListView ingredientsListView;
+    private Boolean isSavedList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +43,7 @@ public class RecipeDetailsFragment extends Fragment {
 
         Bundle args = getArguments();
         int selectedItem = args.getInt(RecipesListFragment.SELECTED_ITEM_KEY);
+        this.isSavedList = args.getBoolean(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY);
 
         RecipeViewerController controller = RecipeViewerController.Instance();
         List<Recipe> recipes = controller.getRecipes();
@@ -76,23 +86,48 @@ public class RecipeDetailsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_recipe_details, menu);
+        if(this.isSavedList) {
+            MenuItem item = menu.findItem(R.id.action_save);
+            item.setVisible(false);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        RecipeViewerController controller = RecipeViewerController.Instance();
+        switch (id){
+        case R.id.action_save:
+            ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Save!", "Saving...", true);
+
+            RecipeViewerDatabase database = new RecipeViewerDatabase(this.getActivity());
+            database.open();
+            database.addRecipe(this.selectedRecipe, this.getActivity());
+            database.close();
+
+            progressDialog.cancel();
+            Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class DownloadIngredientsForRecipeFromService extends AsyncTask<Void, Void, List<Ingredient>> {
 
         @Override
         protected List<Ingredient> doInBackground(Void... params) {
-            //Bitmap recipeBitmap = HelpersImageDecodeders.decodeSampledBitmapFromResource(getResources(),R.drawable.pizza, 500, 500);
-
             RecipeViewerController controller = RecipeViewerController.Instance();
-            List<Ingredient> ingredients = controller.getIngredientsForRecipeWithId(selectedRecipe.getId());
-
-            return ingredients;
+            return controller.getIngredientsForRecipeWithId(selectedRecipe.getId());
         }
 
         @Override
         protected void onPostExecute(List<Ingredient> ingredients) {
+            selectedRecipe.setIngredientList(ingredients);
             IngredientsAdapter ingredientsAdapter = new IngredientsAdapter(getActivity(), ingredients);
             RecipeDetailsFragment.this.ingredientsListView.setAdapter(ingredientsAdapter);
             RecipeDetailsFragment.setListViewHeightBasedOnChildren(RecipeDetailsFragment.this.ingredientsListView);

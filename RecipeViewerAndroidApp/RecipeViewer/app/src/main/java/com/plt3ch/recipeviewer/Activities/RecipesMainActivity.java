@@ -32,6 +32,8 @@ public class RecipesMainActivity extends AppCompatActivity
      */
     private CharSequence mTitle;
 
+    public final static String NAVIGATE_TO_SAVED_RECIPES_KEY = "savedRecipesKey";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,15 +48,26 @@ public class RecipesMainActivity extends AppCompatActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        onNavigationDrawerItemSelected(0);
+        //onNavigationDrawerItemSelected(0);
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        RecipesListFragment listFragment = new RecipesListFragment();
+        Bundle args = new Bundle();
+        if(position == 1){
+            args.putBoolean(NAVIGATE_TO_SAVED_RECIPES_KEY, true);
+        }
+        else{
+            args.putBoolean(NAVIGATE_TO_SAVED_RECIPES_KEY, false);
+        }
+
+        listFragment.setArguments(args);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, new RecipesListFragment())
+                .replace(R.id.container, listFragment)
                 .commit();
         onSectionAttached(position);
     }

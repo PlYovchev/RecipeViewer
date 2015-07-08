@@ -16,7 +16,6 @@
 
     <string-array name="navigation_drawer_items">
         <item>All Recipies</item>
-        <item>Your Recipies</item>
         <item>Saved Recipies</item>
     </string-array>
 
@@ -40,6 +39,7 @@
     <string name="filter_by_author">Search by author</string>
     <string name="filter_by_ingredient">Search by ingredient</string>
     <string name="filter_by_rating">Search by rating</string>
+    <string name="action_save">Save</string>
 
     <string-array name="array_search_entities">
         <item>Title</item>

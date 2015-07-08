@@ -3,7 +3,9 @@ package com.plt3ch.recipeviewer.Models;
 import android.graphics.Bitmap;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,6 +21,7 @@ public class Recipe {
     private String ImageUrl;
     private Bitmap recipeImage;
     private Bitmap scaledRecipeImage;
+    private List<Ingredient> ingredientList;
 
     public Recipe(){}
 
@@ -103,5 +106,17 @@ public class Recipe {
 
     public Bitmap getScaledRecipeImage() {
         return scaledRecipeImage;
+    }
+
+    public List<Ingredient> getIngredientList() {
+        if(this.ingredientList == null){
+            this.ingredientList = new ArrayList<>();
+        }
+
+        return ingredientList;
+    }
+
+    public void setIngredientList(List<Ingredient> ingredientList) {
+        this.ingredientList = ingredientList;
     }
 }

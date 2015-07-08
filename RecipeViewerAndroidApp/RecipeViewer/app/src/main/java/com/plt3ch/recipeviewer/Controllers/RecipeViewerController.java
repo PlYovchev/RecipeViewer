@@ -1,11 +1,13 @@
 package com.plt3ch.recipeviewer.Controllers;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.plt3ch.recipeviewer.FilterByType;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
+import com.plt3ch.recipeviewer.Models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ public class RecipeViewerController {
     private HashMap<String, ArrayList<String>> filterDictionary;
     private FilterByType filterByType;
     private String lastFilterValue;
+    private User loggedUser;
 
     private static RecipeViewerController recipeViewerController;
 
@@ -47,6 +50,18 @@ public class RecipeViewerController {
         recipesWebServiceController.registerUser(user);
     }
 
+    public boolean logUser(User user){
+        RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
+        boolean userCredentialsConfirmed = recipesWebServiceController.performLoginUser(user);
+        if(userCredentialsConfirmed){
+            this.setLoggedUser(user);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public void addImage(Bitmap bitmap){
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
         recipesWebServiceController.addImage(bitmap);
@@ -58,6 +73,12 @@ public class RecipeViewerController {
         setLastFilterValue(value);
     }
 
+    public void getRecipesFromDatabase(Context context){
+        RecipeViewerDatabase database = new RecipeViewerDatabase(context);
+        database.open();
+        this.recipes = database.getSavedRecipeForCurrentUser();
+        database.close();
+    }
 
     public List<Recipe> getRecipes(){
         return this.recipes;
@@ -113,5 +134,13 @@ public class RecipeViewerController {
 
     public void setLastFilterValue(String lastFilterValue) {
         this.lastFilterValue = lastFilterValue;
+    }
+
+    public User getLoggedUser() {
+        return loggedUser;
+    }
+
+    public void setLoggedUser(User loggedUser) {
+        this.loggedUser = loggedUser;
     }
 }
