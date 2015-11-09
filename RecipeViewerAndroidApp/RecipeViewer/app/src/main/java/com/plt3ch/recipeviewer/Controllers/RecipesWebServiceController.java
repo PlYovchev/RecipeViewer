@@ -60,6 +60,7 @@ class RecipesWebServiceController {
 
 //    private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
     private static final String SERVICE_ADDRESS = "http://192.168.173.1:18888";
+
     private static final String SERVICE_LOGIN_SUFFIX = "/Token";
     private static final String SERVICE_REGISTER_SUFFIX = "/api/Account/Register";
     private static final String SERVICE_ADD_IMAGE_SUFFIX = "/api/UserImages/addImageForUser";

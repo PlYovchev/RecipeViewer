@@ -52,4 +52,5 @@
         <item>Single</item>
         <item>Multiple</item>
     </string-array>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

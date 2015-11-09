@@ -180,6 +180,7 @@ public class RecipesListFragment extends ListFragment {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         ft.replace(R.id.container, recipeDetailsFragment);
         ft.addToBackStack(null);
         ft.commit();

@@ -45,8 +45,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         this.editTextUsername = (EditText) findViewById(R.id.editTextUsername);
         this.editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
-        Button buttonRegister = (Button)findViewById(R.id.registerButton);
-        buttonRegister.setOnClickListener(this);
+//        Button buttonRegister = (Button)findViewById(R.id.registerButton);
+//        buttonRegister.setOnClickListener(this);
 
         Button buttonLogin = (Button)findViewById(R.id.loginButton);
         buttonLogin.setOnClickListener(this);
@@ -87,10 +87,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent intent;
 
         switch (v.getId()) {
-            case R.id.registerButton:
-                intent = new Intent(this, RegisterActivity.class);
-                startActivity(intent);
-                break;
+//            case R.id.registerButton:
+//                intent = new Intent(this, RegisterActivity.class);
+//                startActivity(intent);
+//                break;
             case R.id.loginButton:
                 //if(validateInputData()){
                     new LoginUserFromService().execute(this.editTextUsername.getText().toString(),
