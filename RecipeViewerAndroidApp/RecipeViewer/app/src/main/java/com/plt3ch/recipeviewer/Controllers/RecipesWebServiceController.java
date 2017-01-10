@@ -58,15 +58,15 @@ import java.util.Map;
  */
 class RecipesWebServiceController {
 
-//    private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
-    private static final String SERVICE_ADDRESS = "http://192.168.173.1:18888";
+    private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
+//    private static final String SERVICE_ADDRESS = "http://192.168.173.1:18888";
 
     private static final String SERVICE_LOGIN_SUFFIX = "/Token";
     private static final String SERVICE_REGISTER_SUFFIX = "/api/Account/Register";
     private static final String SERVICE_ADD_IMAGE_SUFFIX = "/api/UserImages/addImageForUser";
     private static final String SERVICE_ALL_RECIPES_SUFFIX = "/api/Recipe/all";
     private static final String SERVICE_RECIPES_SUFFIX = "/api/Recipe/recipes";
-    private static final String SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX = "/api/Recipe/IngredientsForRecipe/";
+    private static final String SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX = "/api/Ingredients/IngredientsForRecipe/";
 
 
     public boolean registerUser(RegisterUser user){
@@ -83,7 +83,8 @@ class RecipesWebServiceController {
         return false;
     }
 
-    public List<Recipe> getFilteredRecipes(String filterType, String filterValue){
+    public List<Recipe> getFilteredRecipes(String filterType,
+            String filterValue) throws IOException {
         List<Recipe> recipes = null;
         String url = SERVICE_ADDRESS + SERVICE_RECIPES_SUFFIX + "?filterType=" + filterType + "&" + "filterValue=" + filterValue;
 
@@ -110,7 +111,8 @@ class RecipesWebServiceController {
 
             InputStream result = sendPostUrlEncodedRequestToService(url, postDataParms);
             if(result != null) {
-                BufferedReader streamReader = new BufferedReader(new InputStreamReader(result, "UTF-8"));
+                BufferedReader streamReader = new BufferedReader(
+                        new InputStreamReader(result, "UTF-8"));
                 StringBuilder responseStrBuilder = new StringBuilder();
 
                 String inputStr;
@@ -135,7 +137,7 @@ class RecipesWebServiceController {
         return false;
     }
 
-    public List<Recipe> getRecipes(){
+    public List<Recipe> getRecipes() throws IOException {
         List<Recipe> recipes = null;
         String url = SERVICE_ADDRESS + SERVICE_ALL_RECIPES_SUFFIX;
 
@@ -151,7 +153,7 @@ class RecipesWebServiceController {
         return recipes;
     }
 
-    public List<Ingredient> getIngredientsForRecipeWithId(int id){
+    public List<Ingredient> getIngredientsForRecipeWithId(int id) throws IOException {
         List<Ingredient> ingredients = null;
         String url = SERVICE_ADDRESS + SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX + id;
 
@@ -201,7 +203,7 @@ class RecipesWebServiceController {
     }
 
 
-    private InputStream sendGetRequestToService(String url){
+    private InputStream sendGetRequestToService(String url) throws IOException {
         InputStream inResponse = null;
         HttpURLConnection c = null;
         try {
@@ -215,7 +217,9 @@ class RecipesWebServiceController {
             c.setReadTimeout(10000);
             c.connect();
             inResponse = c.getInputStream();
-        } catch(Exception e) {
+        } catch(IOException e) {
+            Log.d("Error",
+                    "sendGetRequestToService: Failed to retrieve recipes from the web service!");
             e.printStackTrace();
         }
 

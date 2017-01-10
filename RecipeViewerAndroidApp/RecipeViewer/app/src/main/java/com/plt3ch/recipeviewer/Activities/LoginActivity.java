@@ -92,10 +92,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                startActivity(intent);
 //                break;
             case R.id.loginButton:
-                //if(validateInputData()){
+                if (validateInputData()) {
                     new LoginUserFromService().execute(this.editTextUsername.getText().toString(),
                                                        this.editTextPassword.getText().toString());
-                //}
+                } else {
+                    showWrongCredentialDialog();
+                }
                 break;
             default:
         }
@@ -104,6 +106,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean validateInputData(){
         return Validators.isValidEmail(this.editTextUsername.getText().toString()) &&
                 Validators.isPasswordValidate(this.editTextPassword.getText().toString());
+    }
+
+    private void showWrongCredentialDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+        alertDialogBuilder.setTitle("Wrong credentials!");
+        alertDialogBuilder.setMessage("Wrong username or password!");
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private class LoginUserFromService extends AsyncTask<String, Void, Boolean> {
@@ -133,18 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 finish();
             }
             else{
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
-                alertDialogBuilder.setTitle("Wrong credentials!");
-                alertDialogBuilder.setMessage("Wrong username or password!");
-                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+                showWrongCredentialDialog();
             }
         }
 

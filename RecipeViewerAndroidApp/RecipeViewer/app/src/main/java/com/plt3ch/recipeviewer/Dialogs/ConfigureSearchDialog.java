@@ -24,7 +24,6 @@ public class ConfigureSearchDialog extends DialogFragment{
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View contentView = inflater.inflate(R.layout.dialog_configure_search, null);
 
-
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(contentView)

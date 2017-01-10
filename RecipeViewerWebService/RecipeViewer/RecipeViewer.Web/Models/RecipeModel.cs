@@ -21,6 +21,9 @@ namespace RecipeViewer.Web.Models
                     Title = r.Title,
                     AuthorUserName = r.Author.UserName,
                     Rating = r.Rating,
+                    Difficulty = r.Difficulty,
+                    Duration = r.Duration,
+                    Category = r.Category,
                     ImageUrl = "http://" + HttpContext.Current.Request.Url.Host + ":" + HttpContext.Current.Request.Url.Port + r.ImageUrl,
                     Description = r.Description,
                     DateRecipeAdded = r.DateRecipeAdded,
@@ -36,6 +39,12 @@ namespace RecipeViewer.Web.Models
         public string AuthorUserName { get; set; }
 
         public int Rating {get; set;}
+
+        public int Difficulty { get; set; }
+
+        public float Duration { get; set; }
+
+        public int Category { get; set; }
 
         public string ImageUrl { get; set; }
 

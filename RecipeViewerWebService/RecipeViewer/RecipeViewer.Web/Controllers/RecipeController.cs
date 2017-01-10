@@ -1,12 +1,7 @@
 ﻿using RecipeViewer.Data;
 using RecipeViewer.Models;
 using RecipeViewer.Web.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 
 namespace RecipeViewer.Web.Controllers
@@ -58,7 +53,7 @@ namespace RecipeViewer.Web.Controllers
                         .Select(RecipeModel.fromRecipe);
                     break;
                 case "Ingredient":
-                    recipes = allRecipesQuery.Where(r => r.Ingredients.Any(i => i.Name.ToLower().Contains(value)))
+                    recipes = allRecipesQuery.Where(r => r.Ingredients.Any(i => i.Product.Name.ToLower().Contains(value)))
                         .Select(RecipeModel.fromRecipe);
                     break;
                 case "Rating":
@@ -80,14 +75,6 @@ namespace RecipeViewer.Web.Controllers
             }
 
             return Ok(recipes);
-        }
-
-        [HttpGet]
-        public IHttpActionResult IngredientsForRecipe(int id)
-        {
-            var ingredients = this.data.Ingredients.All().Where(i => i.RecipeId == id).Select(IngredientModel.fromIngredient);
-
-            return Ok(ingredients);
         }
 
         [HttpPost]

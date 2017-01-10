@@ -1,9 +1,11 @@
 package com.plt3ch.recipeviewer.Models;
 
+import java.io.Serializable;
+
 /**
  * Created by plt3ch on 5/6/2015.
  */
-public class User {
+public class User implements Serializable {
 
     private String id;
     private String username;

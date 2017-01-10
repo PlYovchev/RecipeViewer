@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class Validators {
 
     private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_]{3,15}$";
-    private static final String PASSWORD_PATTERN = "^[a-zA-Z0-9.]{6,15}$";
+    private static final String PASSWORD_PATTERN = "^[a-zA-Z0-9.!]{6,15}$";
 
     public final static boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();

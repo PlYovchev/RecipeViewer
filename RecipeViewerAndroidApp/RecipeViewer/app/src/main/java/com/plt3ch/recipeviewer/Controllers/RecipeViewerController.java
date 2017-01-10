@@ -9,6 +9,7 @@ import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
 import com.plt3ch.recipeviewer.Models.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class RecipeViewerController {
             this.setLoggedUser(user);
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
@@ -67,13 +68,13 @@ public class RecipeViewerController {
         recipesWebServiceController.addImage(bitmap);
     }
 
-    public void getRecipesFilterByTypeWithValue(String value){
+    public void fetchRecipesFilterByTypeWithValue(String value) throws IOException {
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
         this.recipes = recipesWebServiceController.getFilteredRecipes(this.filterByType.toString(), value);
         setLastFilterValue(value);
     }
 
-    public void getRecipesFromDatabase(Context context){
+    public void fetchRecipesFromDatabase(Context context){
         RecipeViewerDatabase database = new RecipeViewerDatabase(context);
         database.open();
         this.recipes = database.getSavedRecipeForCurrentUser();
@@ -84,12 +85,12 @@ public class RecipeViewerController {
         return this.recipes;
     }
 
-    public List<Ingredient> getIngredientsForRecipeWithId(int id) {
+    public List<Ingredient> getIngredientsForRecipeWithId(int id) throws IOException {
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
         return recipesWebServiceController.getIngredientsForRecipeWithId(id);
     }
 
-    public boolean getAllRecipesFromService(){
+    public boolean getAllRecipesFromService() throws IOException {
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
         this.recipes = recipesWebServiceController.getRecipes();
 

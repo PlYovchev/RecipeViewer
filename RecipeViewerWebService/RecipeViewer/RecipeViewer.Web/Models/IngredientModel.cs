@@ -16,7 +16,7 @@ namespace RecipeViewer.Web.Models
                 return i => new IngredientModel
                 {
                     Id = i.Id,
-                    Name = i.Name,
+                    Product = i.Product,
                     Quantity = i.Quantity
                 };
             }
@@ -24,7 +24,7 @@ namespace RecipeViewer.Web.Models
 
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public Product Product { get; set; }
 
         public string Quantity { get; set; }
     }

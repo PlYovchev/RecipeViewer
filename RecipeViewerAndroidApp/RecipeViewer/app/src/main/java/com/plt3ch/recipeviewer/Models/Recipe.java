@@ -2,6 +2,10 @@ package com.plt3ch.recipeviewer.Models;
 
 import android.graphics.Bitmap;
 
+import com.plt3ch.recipeviewer.Models.Enums.Difficulty;
+import com.plt3ch.recipeviewer.Models.Enums.RecipeCategory;
+
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,11 +15,14 @@ import java.util.Locale;
 /**
  * Created by plt3ch on 5/7/2015.
  */
-public class Recipe {
+public class Recipe implements Serializable {
     private int Id;
     private String Title;
     private String AuthorUserName;
     private int Rating;
+    private Difficulty Difficulty;
+    private float Duration;
+    private RecipeCategory Category;
     private String Description;
     private Date DateRecipeAdded;
     private String ImageUrl;
@@ -118,5 +125,29 @@ public class Recipe {
 
     public void setIngredientList(List<Ingredient> ingredientList) {
         this.ingredientList = ingredientList;
+    }
+
+    public com.plt3ch.recipeviewer.Models.Enums.Difficulty getDifficulty() {
+        return Difficulty;
+    }
+
+    public void setDifficulty(com.plt3ch.recipeviewer.Models.Enums.Difficulty difficulty) {
+        Difficulty = difficulty;
+    }
+
+    public float getDuration() {
+        return Duration;
+    }
+
+    public void setDuration(float duration) {
+        Duration = duration;
+    }
+
+    public RecipeCategory getCategory() {
+        return Category;
+    }
+
+    public void setCategory(RecipeCategory category) {
+        Category = category;
     }
 }

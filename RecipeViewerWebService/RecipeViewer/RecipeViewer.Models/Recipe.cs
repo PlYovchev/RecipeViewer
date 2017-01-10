@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RecipeViewer.Models
 {
@@ -18,6 +15,12 @@ namespace RecipeViewer.Models
         public int Id { get; set; }
 
         public string Title { get; set; }
+
+        public int Difficulty { get; set; }
+
+        public float Duration { get; set; }
+
+        public int Category { get; set; }
 
         public string AuthorId { get; set; }
 

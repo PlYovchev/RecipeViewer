@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.plt3ch.recipeviewer.Models.Ingredient;
+import com.plt3ch.recipeviewer.Models.Product;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.User;
 
@@ -108,7 +109,7 @@ public class RecipeViewerDatabase {
 
         for (Ingredient ingredient : recipe.getIngredientList()) {
             ContentValues valuesIngredients = new ContentValues();
-            valuesIngredients.put(RecipeViewerSqliteHelper.COLUMN_NAME, ingredient.getName());
+            valuesIngredients.put(RecipeViewerSqliteHelper.COLUMN_NAME, ingredient.getProduct().getName());
             valuesIngredients.put(RecipeViewerSqliteHelper.COLUMN_QUANTITY, ingredient.getQuantity());
             valuesIngredients.put(RecipeViewerSqliteHelper.COLUMN_RECIPEID, recipe.getId());
 
@@ -161,7 +162,9 @@ public class RecipeViewerDatabase {
 
     private Ingredient cursorToIngredient(Cursor cursor){
         Ingredient ingredient = new Ingredient();
-        ingredient.setName(cursor.getString(1));
+        Product product = new Product();
+        product.setName(cursor.getString(1));
+        ingredient.setProduct(product);
         ingredient.setQuantity(cursor.getString(2));
 
         return ingredient;

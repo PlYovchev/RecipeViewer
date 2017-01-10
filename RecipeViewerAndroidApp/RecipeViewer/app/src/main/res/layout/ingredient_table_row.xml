@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ingredientRow">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/table_row_item_vertical_margin"
+        android:paddingBottom="@dimen/table_row_item_vertical_margin"
+        android:id="@+id/productText"
+        android:text="Eggs"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:background="@drawable/table_row_border_shape" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/table_row_item_vertical_margin"
+        android:paddingBottom="@dimen/table_row_item_vertical_margin"
+        android:id="@+id/quantityText"
+        android:text="3"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:background="@drawable/table_row_border_shape" />
+</TableRow>

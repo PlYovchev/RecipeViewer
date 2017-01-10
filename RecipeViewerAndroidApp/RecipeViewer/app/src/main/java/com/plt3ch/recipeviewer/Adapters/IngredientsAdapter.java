@@ -31,7 +31,7 @@ public class IngredientsAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return ingredients.size();
+        return ingredients != null ? ingredients.size() : 0;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class IngredientsAdapter extends BaseAdapter{
 
         Ingredient currentIngredient = this.ingredients.get(position);
 
-        ingredientTextView.setText(currentIngredient.getName());
+        ingredientTextView.setText(currentIngredient.getProduct().getName());
         quantityTextView.setText(currentIngredient.getQuantity());
 
         return convertView;

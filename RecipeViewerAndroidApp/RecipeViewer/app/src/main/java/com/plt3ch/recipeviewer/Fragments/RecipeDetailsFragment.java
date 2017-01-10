@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,15 +19,13 @@ import android.widget.Toast;
 
 import com.plt3ch.recipeviewer.Activities.RecipesMainActivity;
 import com.plt3ch.recipeviewer.Adapters.IngredientsAdapter;
-import com.plt3ch.recipeviewer.Adapters.RecipesAdapter;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerDatabase;
-import com.plt3ch.recipeviewer.Dialogs.ConfigureSearchDialog;
-import com.plt3ch.recipeviewer.FilterByType;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.R;
 
+import java.io.IOException;
 import java.util.List;
 
 public class RecipeDetailsFragment extends Fragment {
@@ -121,8 +118,14 @@ public class RecipeDetailsFragment extends Fragment {
 
         @Override
         protected List<Ingredient> doInBackground(Void... params) {
-            RecipeViewerController controller = RecipeViewerController.Instance();
-            return controller.getIngredientsForRecipeWithId(selectedRecipe.getId());
+            try {
+                RecipeViewerController controller = RecipeViewerController.Instance();
+                return controller.getIngredientsForRecipeWithId(selectedRecipe.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
 
         @Override

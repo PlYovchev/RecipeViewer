@@ -1,12 +1,7 @@
 package com.plt3ch.recipeviewer.Fragments;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Bundle;
@@ -14,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,19 +16,17 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageSize;
+
+import com.plt3ch.recipeviewer.Activities.RecipeDetailsActivity;
 import com.plt3ch.recipeviewer.Activities.RecipesMainActivity;
 import com.plt3ch.recipeviewer.Adapters.RecipesAdapter;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
-import com.plt3ch.recipeviewer.Controllers.RecipeViewerDatabase;
 import com.plt3ch.recipeviewer.Dialogs.ConfigureSearchDialog;
 import com.plt3ch.recipeviewer.FilterByType;
-import com.plt3ch.recipeviewer.HelpersImageDecodeders;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.R;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 /**
  * A fragment representing a list of Items.
@@ -48,7 +40,7 @@ public class RecipesListFragment extends ListFragment {
     private Runnable onSearchRunnble;
 
     private String filterValue = "";
-    private boolean isSavedList;
+    private boolean showSavedRecipes;
 
     public static final String SELECTED_ITEM_KEY = "selectedItem";
 
@@ -57,7 +49,7 @@ public class RecipesListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
-        this.isSavedList = args.getBoolean(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY);
+        this.showSavedRecipes = args.getBoolean(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY);
 
         setHasOptionsMenu(true);
         new DownloadRecipes().execute("");
@@ -82,7 +74,7 @@ public class RecipesListFragment extends ListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (this.isSavedList) {
+        if (this.showSavedRecipes) {
             inflater.inflate(R.menu.menu_recipes_saved, menu);
         }
         else{
@@ -172,28 +164,36 @@ public class RecipesListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
-        Bundle args = new Bundle();
-        args.putInt(SELECTED_ITEM_KEY, position);
-        args.putBoolean(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY, this.isSavedList);
-        recipeDetailsFragment.setArguments(args);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        ft.replace(R.id.container, recipeDetailsFragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);
+        intent.putExtra(SELECTED_ITEM_KEY, position);
+        intent.putExtra(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY, this.showSavedRecipes);
+        getActivity().startActivity(intent);
+//        RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(SELECTED_ITEM_KEY, position);
+//        args.putBoolean(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY, this.showSavedRecipes);
+//        recipeDetailsFragment.setArguments(args);
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction ft = fragmentManager.beginTransaction();
+//        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+//        ft.replace(R.id.container, recipeDetailsFragment);
+//        ft.addToBackStack(null);
+//        ft.commit();
     }
 
     private class DownloadRecipes extends AsyncTask <String, Void, List<Recipe>> {
 
-        @Override
-        protected void onPreExecute() {
-        }
+        private boolean haveRetrievalFailed = false;
 
         @Override
         protected void onPostExecute(List<Recipe> recipes) {
+            if (haveRetrievalFailed) {
+                RecipesListFragment.this.showSavedRecipes = true;
+                new DownloadRecipes().execute("");
+                return;
+            }
+
             RecipesAdapter recipesAdapter = new RecipesAdapter(getActivity(), recipes);
             setListAdapter(recipesAdapter);
         }
@@ -202,17 +202,20 @@ public class RecipesListFragment extends ListFragment {
         protected List<Recipe> doInBackground(String... params) {
             RecipeViewerController controller = RecipeViewerController.Instance();
             List<Recipe> recipes = null;
-            if(RecipesListFragment.this.isSavedList){
-                controller.getRecipesFromDatabase(getActivity());
+            if(RecipesListFragment.this.showSavedRecipes){
+                controller.fetchRecipesFromDatabase(getActivity());
                 recipes = controller.getRecipes();
             }
             else{
-                String filterValue = params[0];
-
-                controller.getRecipesFilterByTypeWithValue(filterValue);
-                recipes = controller.getRecipes();
-                for (Recipe recipe : recipes){
-                    recipe.setRecipeImage(controller.downloadImageByUrl(recipe.getImageUrl()));
+                try {
+                    String filterValue = params[0];
+                    controller.fetchRecipesFilterByTypeWithValue(filterValue);
+                    recipes = controller.getRecipes();
+                    for (Recipe recipe : recipes){
+                        recipe.setRecipeImage(controller.downloadImageByUrl(recipe.getImageUrl()));
+                    }
+                } catch (IOException e) {
+                    haveRetrievalFailed = true;
                 }
             }
 
