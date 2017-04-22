@@ -52,15 +52,15 @@ public class RecipeViewerController {
         recipesWebServiceController.registerUser(user);
     }
 
-    public boolean logUser(User user){
+    public String logUser(User user){
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
-        boolean userCredentialsConfirmed = recipesWebServiceController.performLoginUser(user);
-        if(userCredentialsConfirmed){
+        String loginAuthToken = recipesWebServiceController.performLoginUser(user);
+        if(loginAuthToken != null && loginAuthToken.length() > 0){
             this.setLoggedUser(user);
-            return true;
+            return loginAuthToken;
         }
         else {
-            return false;
+            return null;
         }
     }
 

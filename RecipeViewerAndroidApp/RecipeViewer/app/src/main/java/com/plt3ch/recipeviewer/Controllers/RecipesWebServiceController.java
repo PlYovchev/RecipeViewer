@@ -103,7 +103,7 @@ class RecipesWebServiceController {
         return recipes;
     }
 
-    public boolean performLoginUser(User user){
+    public String performLoginUser(User user){
         try {
             HashMap<String, String> postDataParms = new HashMap<>();
             postDataParms.put("grant_type", "password");
@@ -127,7 +127,7 @@ class RecipesWebServiceController {
                 String userId = jsonObject.getString("userId");
                 user.setId(userId);
 
-                return true;
+                return jsonObject.getString("access_token");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -137,7 +137,7 @@ class RecipesWebServiceController {
             e.printStackTrace();
         }
 
-        return false;
+        return null;
     }
 
     public List<Recipe> getRecipes() throws IOException {
