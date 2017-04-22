@@ -41,6 +41,14 @@ namespace RecipeViewer.Data
             }
         }
 
+        public IRepository<UserFeedback> UserFeedbacks
+        {
+            get
+            {
+                return this.GetRepository<UserFeedback>();
+            }
+        }
+
         public IRepository<Ingredient> Ingredients
         {
             get

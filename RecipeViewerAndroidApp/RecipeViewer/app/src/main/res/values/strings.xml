@@ -3,6 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_add_comment">Add comment</string>
     <string name="username">Username:</string>
     <string name="password">Password:</string>
     <string name="register">Register</string>
@@ -10,7 +11,7 @@
     <string name="recipe_viewer">Recipe Viewer</string>
     <string name="login_greeting">Hello! Please login!</string>
     <string name="email">Email:</string>
-    <string name="confirm_password" >Confirm password:</string>
+    <string name="confirm_password">Confirm password:</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_recipies_main">RecipiesMainActivity</string>
@@ -145,6 +146,20 @@
         "On the layout level, design your app layout to minimize opportunities for interference. "
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
+    </string>
+    <string name="title_activity_login_via_api">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
     </string>
 
 </resources>

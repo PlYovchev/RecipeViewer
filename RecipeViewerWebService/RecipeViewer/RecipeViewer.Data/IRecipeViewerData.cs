@@ -16,6 +16,8 @@ namespace RecipeViewer.Data
 
         IRepository<Ingredient> Ingredients { get; }
 
+        IRepository<UserFeedback> UserFeedbacks { get; }
+
         int SaveChanges();
     }
 }

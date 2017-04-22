@@ -26,6 +26,8 @@ namespace RecipeViewer.Data
 
         public IDbSet<UserImage> UserImages { get; set; }
 
+        public IDbSet<UserFeedback> UserFeedbacks { get; set; }
+
         public new IDbSet<TEntity> Set<TEntity>() where TEntity : class
         {
             return base.Set<TEntity>();

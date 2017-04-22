@@ -78,6 +78,21 @@ namespace RecipeViewer.Web.Controllers
         }
 
         [HttpPost]
+        public IHttpActionResult AddRecipeComment(UserFeedback feedback)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            this.data.UserFeedbacks.Add(feedback);
+            this.data.UserFeedbacks.SaveChanges();
+
+            return Ok();
+        }
+
+
+        [HttpPost]
         public IHttpActionResult Create(Recipe recipe)
         {
             if (!this.ModelState.IsValid)

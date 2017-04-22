@@ -14,6 +14,7 @@ import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
 import com.plt3ch.recipeviewer.Models.User;
+import com.plt3ch.recipeviewer.Models.UserFeedback;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -59,15 +60,17 @@ import java.util.Map;
 class RecipesWebServiceController {
 
     private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
-//    private static final String SERVICE_ADDRESS = "http://192.168.173.1:18888";
+//    private static final String SERVICE_ADDRESS = "http://192.168.137.1:18888";
+//    private static final String SERVICE_ADDRESS = "http://192.168.43.110:18888";
 
     private static final String SERVICE_LOGIN_SUFFIX = "/Token";
     private static final String SERVICE_REGISTER_SUFFIX = "/api/Account/Register";
     private static final String SERVICE_ADD_IMAGE_SUFFIX = "/api/UserImages/addImageForUser";
     private static final String SERVICE_ALL_RECIPES_SUFFIX = "/api/Recipe/all";
     private static final String SERVICE_RECIPES_SUFFIX = "/api/Recipe/recipes";
-    private static final String SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX = "/api/Ingredients/IngredientsForRecipe/";
-
+    private static final String SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX =
+            "/api/Ingredients/IngredientsForRecipe/";
+    private static final String SERVICE_RECIPE_USERFEEDBACK_SUFFIX = "/api/recipe/AddRecipeComment";
 
     public boolean registerUser(RegisterUser user){
         Gson gson = new Gson();
@@ -153,6 +156,15 @@ class RecipesWebServiceController {
         return recipes;
     }
 
+    public boolean saveUserComment(UserFeedback feedback) {
+        Gson gson = new Gson();
+        String feedbackToString = gson.toJson(feedback);
+        String url = SERVICE_ADDRESS + SERVICE_RECIPE_USERFEEDBACK_SUFFIX;
+
+        InputStream result = this.sendJSONToService(feedbackToString, url);
+        return result != null;
+    }
+
     public List<Ingredient> getIngredientsForRecipeWithId(int id) throws IOException {
         List<Ingredient> ingredients = null;
         String url = SERVICE_ADDRESS + SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX + id;
@@ -202,7 +214,6 @@ class RecipesWebServiceController {
         }
     }
 
-
     private InputStream sendGetRequestToService(String url) throws IOException {
         InputStream inResponse = null;
         HttpURLConnection c = null;
@@ -233,6 +244,7 @@ class RecipesWebServiceController {
             DataInputStream input;
             URL u = new URL (url);
             urlConn =(HttpURLConnection) u.openConnection();
+            urlConn.setRequestMethod("POST");
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
             urlConn.setUseCaches(false);

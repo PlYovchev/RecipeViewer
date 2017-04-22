@@ -8,6 +8,7 @@ import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
 import com.plt3ch.recipeviewer.Models.User;
+import com.plt3ch.recipeviewer.Models.UserFeedback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,6 +100,11 @@ public class RecipeViewerController {
         }else{
             return false;
         }
+    }
+
+    public boolean saveUserFeedback(UserFeedback userFeedback) {
+        RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
+        return recipesWebServiceController.saveUserComment(userFeedback);
     }
 
     public Recipe getChosenRecipe() {

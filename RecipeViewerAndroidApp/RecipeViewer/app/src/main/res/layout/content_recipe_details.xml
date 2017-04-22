@@ -42,6 +42,12 @@
             android:text="@string/large_text"
             android:id="@+id/recipeShortDescription"/>
 
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/commentsList" />
+
+
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

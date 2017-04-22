@@ -1,17 +1,25 @@
 package com.plt3ch.recipeviewer.Activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Rating;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +31,7 @@ import com.plt3ch.recipeviewer.Fragments.RecipeDetailsFragment;
 import com.plt3ch.recipeviewer.Fragments.RecipesListFragment;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
+import com.plt3ch.recipeviewer.Models.UserFeedback;
 import com.plt3ch.recipeviewer.R;
 import com.plt3ch.recipeviewer.ViewConfigureStrategies.RecipeDetailsViewStrategy;
 import com.plt3ch.recipeviewer.ViewConfigureStrategies.RecipiesViewStrategy;
@@ -93,14 +102,56 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_recipe_details, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            case R.id.action_add_comment:
+                showAddCommentDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAddCommentDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.add_comment_dialog, null);
+        dialogBuilder.setView(dialogView);
+
+        dialogBuilder
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Post", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText commentText = (EditText) dialogView.findViewById(R.id.commentText);
+                        RatingBar userRecipeRating = (RatingBar) dialogView
+                                .findViewById(R.id.userRecipeRating);
+
+                        final UserFeedback feedback = new UserFeedback();
+                        feedback.setComment(commentText.getText().toString());
+                        feedback.setRating(Math.round(userRecipeRating.getRating()));
+                        feedback.setRecipeId(selectedRecipe.getId());
+                        feedback.setUserId(RecipeViewerController.Instance().getLoggedUser().getId());
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                RecipeViewerController.Instance().saveUserFeedback(feedback);
+                            }
+                        }).start();
+                    }
+                });
+        dialogBuilder.create().show();
     }
 
     private void extractDataFromBundle() {
