@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -123,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         alertDialog.show();
     }
 
-    private class LoginUserFromService extends AsyncTask<String, Void, Boolean> {
+    private class LoginUserFromService extends AsyncTask<String, Void, String> {
         ProgressDialog progressDialog;
 
         @Override
@@ -138,12 +139,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         @Override
-        protected void onPostExecute(Boolean hasLogged) {
+        protected void onPostExecute(String authToken) {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
 
-            if(hasLogged) {
+            if(!TextUtils.isEmpty(authToken)) {
                 Intent intent = new Intent(LoginActivity.this, RecipesMainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -155,7 +156,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             String username = params[0];
             String password = params[1];
             User user = new User();

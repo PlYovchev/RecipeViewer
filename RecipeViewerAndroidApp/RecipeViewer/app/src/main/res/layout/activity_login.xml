@@ -6,7 +6,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity"
     android:background="#f3f9f2">
     <ScrollView
         android:layout_width="match_parent"
@@ -61,13 +60,14 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="30dp">
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/login"
-                        android:id="@+id/loginButton"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/custom_button"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/login"
+                    android:id="@+id/loginButton"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/custom_button"
+                    android:onClick="handleLogin"/>
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>

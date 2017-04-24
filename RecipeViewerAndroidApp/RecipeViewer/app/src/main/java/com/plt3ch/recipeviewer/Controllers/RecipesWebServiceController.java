@@ -243,14 +243,14 @@ class RecipesWebServiceController {
             HttpURLConnection urlConn;
             DataInputStream input;
             URL u = new URL (url);
-            urlConn =(HttpURLConnection) u.openConnection();
+            urlConn = (HttpURLConnection) u.openConnection();
             urlConn.setRequestMethod("POST");
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
             urlConn.setUseCaches(false);
             urlConn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             urlConn.connect();
-            OutputStream printout= urlConn.getOutputStream();
+            OutputStream printout = urlConn.getOutputStream();
             printout.write(message.getBytes("UTF-8"));
             printout.flush();
             printout.close();
@@ -324,11 +324,11 @@ class RecipesWebServiceController {
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
+            if (!first) {
                 result.append("&");
+            }
 
+            first = false;
             result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
             result.append("=");
             result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));

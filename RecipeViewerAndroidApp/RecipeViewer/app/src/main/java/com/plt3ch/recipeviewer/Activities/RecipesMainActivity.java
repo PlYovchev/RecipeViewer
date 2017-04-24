@@ -1,20 +1,18 @@
 package com.plt3ch.recipeviewer.Activities;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 
-import com.plt3ch.recipeviewer.Dialogs.ConfigureSearchDialog;
 import com.plt3ch.recipeviewer.Fragments.NavigationDrawerFragment;
 import com.plt3ch.recipeviewer.Fragments.RecipesListFragment;
 import com.plt3ch.recipeviewer.R;

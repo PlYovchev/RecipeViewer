@@ -22,9 +22,6 @@ import com.plt3ch.recipeviewer.R;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
-    /** The Intent extra to store password. */
-    public static final String PARAM_PASSWORD = "password";
-
     /** The Intent extra to store username. */
     public static final String PARAM_USERNAME = "username";
 
@@ -123,6 +120,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         final Intent intent = new Intent();
         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mUsername);
         intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+        intent.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
         setAccountAuthenticatorResult(intent.getExtras());
         setResult(RESULT_OK, intent);
         finish();
