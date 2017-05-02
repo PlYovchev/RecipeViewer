@@ -20,8 +20,6 @@ import java.util.List;
  */
 public class RecipeViewerController {
 
-    public static final String SHARED_PREF_NAME = "recipeViewerSharedPrefs";
-
     private List<Recipe> recipes;
     private Recipe chosenRecipe;
     private HashMap<String, ArrayList<String>> filterDictionary;

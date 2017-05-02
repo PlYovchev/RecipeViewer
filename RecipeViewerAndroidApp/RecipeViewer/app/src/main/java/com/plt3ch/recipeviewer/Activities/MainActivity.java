@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.plt3ch.recipeviewer.Controllers.AuthenticationController;
 import com.plt3ch.recipeviewer.Constants;
 import com.plt3ch.recipeviewer.R;
 
@@ -32,20 +33,31 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 123;
 
     private AccountManager mAccountManager;
+    private AuthenticationController mAuthenticationController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mAccountManager = AccountManager.get(this);
+        mAuthenticationController = AuthenticationController.getInstance();
 
         setContentView(R.layout.activity_main);
         Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AccountManager.get(MainActivity.this)
-                        .addAccount(Constants.ACCOUNT_TYPE, Constants.AUTHTOKEN_TYPE, null, null,
-                                MainActivity.this, null, null);
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.GET_ACCOUNTS)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    tryLoginWithExistingAccount();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.GET_ACCOUNTS},
+                            MY_PERMISSIONS_REQUEST_GET_ACCOUNTS);
+                }
+//                AccountManager.get(MainActivity.this)
+//                        .addAccount(Constants.ACCOUNT_TYPE, Constants.AUTHTOKEN_TYPE, null, null,
+//                                MainActivity.this, null, null);
 //                Intent intentToLoginActivity = new Intent(getBaseContext(), LoginActivity.class);
 //                startActivity(intentToLoginActivity);
             }
@@ -53,49 +65,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void tryLoginWithExistingAccount() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.GET_ACCOUNTS},
-                    MY_PERMISSIONS_REQUEST_GET_ACCOUNTS);
-            return;
-        }
+        Account account = mAuthenticationController.getLoggedUserAccount();
+        if (account == null) {
+            Account[] accounts = mAuthenticationController.getAllRecipeViewerAccounts();
+            // Check if there are any accounts created and if there are none,
+            // hint the user to create a new one.
+            if (accounts == null || accounts.length == 0) {
+                // TODO: prompt to create account
+                return;
+            }
 
-        toBeNamedLater();
-    }
-
-    private void toBeNamedLater() {
-        Account[] accounts;
-        try {
-            accounts = mAccountManager.getAccountsByType(Constants.ACCOUNT_TYPE);
-        } catch (SecurityException se) {
-            Log.e(TAG, "Something went wrong with retrieving the permissions " +
-                    "for getting the accounts information!!!");
-            return;
-        }
-
-        // Check if there are any accounts created and if there are none,
-        // hint the user to create a new one.
-        if (accounts == null || accounts.length == 0) {
-            Toast.makeText(this,
-                    "There are no existing accounts!\nPlease register a new one!", Toast.LENGTH_LONG);
-            return;
-        }
-
-        // If only one, try to log with it.
-        if (accounts.length == 1) {
-            Account account = accounts[0];
-            String authToken;
-            try {
-                authToken = mAccountManager.blockingGetAuthToken(account,
-                        Constants.AUTHTOKEN_TYPE, false);
-            } catch (OperationCanceledException | IOException | AuthenticatorException e) {
-                e.printStackTrace();
+            if (accounts.length == 1) {
+                account = accounts[0];
+                mAuthenticationController.saveLoggedUsername(account.name);
             }
         }
 
-        for (Account account : accounts) {
-
+        if (account != null) {
+            if (mAuthenticationController.verifyLoggedUserIsAuthenticated()) {
+                Intent intentToLoginActivity = new Intent(this, LoginActivity.class);
+                startActivity(intentToLoginActivity);
+            }
         }
     }
 
@@ -112,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    tryLoginWithExistingAccount();
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 

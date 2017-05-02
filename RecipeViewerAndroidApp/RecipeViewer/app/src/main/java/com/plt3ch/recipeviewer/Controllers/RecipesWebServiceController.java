@@ -1,15 +1,12 @@
 package com.plt3ch.recipeviewer.Controllers;
 
-import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.plt3ch.recipeviewer.HelpersImageDecodeders;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
@@ -17,17 +14,11 @@ import com.plt3ch.recipeviewer.Models.User;
 import com.plt3ch.recipeviewer.Models.UserFeedback;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,9 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +46,8 @@ import java.util.Map;
  * Created by plt3ch on 5/7/2015.
  */
 class RecipesWebServiceController {
+
+    private static final String TAG = "RVWebController";
 
     private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
 //    private static final String SERVICE_ADDRESS = "http://192.168.137.1:18888";
@@ -68,9 +58,42 @@ class RecipesWebServiceController {
     private static final String SERVICE_ADD_IMAGE_SUFFIX = "/api/UserImages/addImageForUser";
     private static final String SERVICE_ALL_RECIPES_SUFFIX = "/api/Recipe/all";
     private static final String SERVICE_RECIPES_SUFFIX = "/api/Recipe/recipes";
+    private static final String USER_INFO_SUFFIX = "/api/Account/UserInfo";
     private static final String SERVICE_INGREDIENTS_FOR_RECIPE_SUFFIX =
             "/api/Ingredients/IngredientsForRecipe/";
     private static final String SERVICE_RECIPE_USERFEEDBACK_SUFFIX = "/api/recipe/AddRecipeComment";
+
+    private static final String HAS_REGISTERED_KEY = "HasRegistered";
+    private static final String EMAIL_KEY = "Email";
+
+    public boolean checkIfLoggedUserTokenIsValid() {
+        AuthenticationController authController = AuthenticationController.getInstance();
+        String username = authController.getLastLoggedUsername();
+        String authToken = authController.getLoggedUserAuthToken();
+
+        if (username == null || authToken == null) {
+            Log.d(TAG, "When checking authtoken validity, the authToken or username can't be null");
+            return false;
+        }
+
+        InputStream result = sendGETRequestWithToken(SERVICE_ADDRESS + USER_INFO_SUFFIX, authToken);
+        if (result != null) {
+            try {
+                JSONObject json = transformInputStreamIntoJson(result);
+                Boolean hasRegistered = Boolean.parseBoolean(json.getString(HAS_REGISTERED_KEY));
+                String email = json.getString(EMAIL_KEY);
+                if (hasRegistered && username.equals(email)) {
+                    return true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
 
     public boolean registerUser(RegisterUser user){
         Gson gson = new Gson();
@@ -78,7 +101,7 @@ class RecipesWebServiceController {
         String url = SERVICE_ADDRESS + SERVICE_REGISTER_SUFFIX;
         InputStream result = this.sendJSONToService(userToString, url);
 
-        if(result != null){
+        if (result != null){
             Reader reader = new InputStreamReader(result);
             User returnedUser = gson.fromJson(reader, User.class);
         }
@@ -114,19 +137,9 @@ class RecipesWebServiceController {
 
             InputStream result = sendPostUrlEncodedRequestToService(url, postDataParms);
             if(result != null) {
-                BufferedReader streamReader = new BufferedReader(
-                        new InputStreamReader(result, "UTF-8"));
-                StringBuilder responseStrBuilder = new StringBuilder();
-
-                String inputStr;
-                while ((inputStr = streamReader.readLine()) != null) {
-                    responseStrBuilder.append(inputStr);
-                }
-
-                JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+                JSONObject jsonObject = transformInputStreamIntoJson(result);
                 String userId = jsonObject.getString("userId");
                 user.setId(userId);
-
                 return jsonObject.getString("access_token");
             }
         } catch (UnsupportedEncodingException e) {
@@ -212,6 +225,30 @@ class RecipesWebServiceController {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    private InputStream sendGETRequestWithToken(String url, String authToken) {
+        InputStream inResponse = null;
+        HttpURLConnection urlConn = null;
+        try {
+            URL u = new URL(url);
+            urlConn = (HttpURLConnection) u.openConnection();
+            urlConn.setRequestMethod("GET");
+            urlConn.setRequestProperty("Authorization", authToken);
+            urlConn.setRequestProperty("Content-Type", "application/json");
+            urlConn.setUseCaches(false);
+            urlConn.setAllowUserInteraction(false);
+            urlConn.setConnectTimeout(10000);
+            urlConn.setReadTimeout(10000);
+            urlConn.connect();
+            inResponse = urlConn.getInputStream();
+        } catch(IOException e) {
+            Log.d("Error",
+                    "sendGETRequestWithToken: Failed to retrieve recipes from the web service!");
+            e.printStackTrace();
+        }
+
+        return inResponse;
     }
 
     private InputStream sendGetRequestToService(String url) throws IOException {
@@ -337,4 +374,18 @@ class RecipesWebServiceController {
         return result.toString();
     }
 
+    private JSONObject transformInputStreamIntoJson(InputStream input)
+            throws IOException, JSONException {
+        BufferedReader streamReader = new BufferedReader(
+                new InputStreamReader(input, "UTF-8"));
+        StringBuilder responseStrBuilder = new StringBuilder();
+
+        String inputStr;
+        while ((inputStr = streamReader.readLine()) != null) {
+            responseStrBuilder.append(inputStr);
+        }
+
+        JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+        return jsonObject;
+    }
 }
