@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             user.setPassword(password);
 
             RecipeViewerController controller = RecipeViewerController.Instance();
-            return controller.logUser(user);
+            return null;
         }
     }
 }

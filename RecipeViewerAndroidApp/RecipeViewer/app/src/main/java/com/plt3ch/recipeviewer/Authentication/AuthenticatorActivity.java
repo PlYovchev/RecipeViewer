@@ -4,19 +4,22 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.plt3ch.recipeviewer.Constants;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
+import com.plt3ch.recipeviewer.InnerAppModels.RequestState;
+import com.plt3ch.recipeviewer.InnerAppModels.WebServiceResponse;
 import com.plt3ch.recipeviewer.Models.User;
 import com.plt3ch.recipeviewer.R;
 
@@ -37,8 +40,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     /** Keep track of the progress dialog so we can dismiss it */
     private ProgressDialog mProgressDialog = null;
-
-    private TextView mMessage;
 
     private String mPassword;
 
@@ -89,13 +90,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
         mPassword = mPasswordEdit.getText().toString();
         if (TextUtils.isEmpty(mUsername) || TextUtils.isEmpty(mPassword)) {
-            mMessage.setText(getMessage());
+            showNotificationDialog("Authentication failed", getMessage().toString());
         } else {
             // Show a progress dialog, and kick off a background task to perform
             // the user login attempt.
             showProgress();
             mAuthTask = new UserLoginTask();
-            mAuthTask.execute();
+            mAuthTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
         }
     }
 
@@ -129,10 +130,21 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     /**
      * Called when the authentication process completes (see attemptLogin()).
      *
-     * @param authToken the authentication token returned by the server, or NULL if
-     *            authentication failed.
+     * @param loginResponse the authentication response returned by the server.
      */
-    public void onAuthenticationResult(String authToken) {
+    public void onAuthenticationResult(WebServiceResponse loginResponse) {
+        if (loginResponse == null) {
+            showNotificationDialog("Authentication failed",
+                    "Something went wrong with authentication!");
+            return;
+        }
+        if (loginResponse.getState() == RequestState.ServiceNotReached) {
+            showNotificationDialog("Authentication failed",
+                    "Can't connect to web service!");
+            return;
+        }
+
+        String authToken = loginResponse.getResponseValueForKey(WebServiceResponse.AUTH_TOKEN);
         boolean success = ((authToken != null) && (authToken.length() > 0));
         Log.i(TAG, "onAuthenticationResult(" + success + ")");
 
@@ -148,14 +160,32 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             Log.e(TAG, "onAuthenticationResult: failed to authenticate");
             if (mRequestNewAccount) {
                 // "Please enter a valid username/password.
-                mMessage.setText("Please enter a valid username/password.");
+                showNotificationDialog("Authentication failed",
+                        "Please enter a valid username and password.");
             } else {
                 // "Please enter a valid password." (Used when the
                 // account is already in the database but the password
                 // doesn't work.)
-                mMessage.setText("Please enter a valid password.");
+                showNotificationDialog("Authentication failed",
+                        "Please enter a valid password.");
             }
         }
+    }
+
+    private void showNotificationDialog(String title, String message) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                new ContextThemeWrapper(this, R.style.AppTheme_NoActionBar));
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     public void onAuthenticationCancel() {
@@ -206,10 +236,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
      * Represents an asynchronous task used to authenticate a user against the
      * SampleSync Service
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, String> {
+    public class UserLoginTask extends AsyncTask<Void, Void, WebServiceResponse> {
+
+        private ProgressDialog progressDialog;
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected void onPreExecute() {
+            if (progressDialog == null) {
+                progressDialog = new ProgressDialog(AuthenticatorActivity.this);
+                progressDialog.setMessage("Please wait...");
+                progressDialog.show();
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setCancelable(false);
+            }
+        }
+
+        @Override
+        protected WebServiceResponse doInBackground(Void... params) {
             // We do the actual work of authenticating the user
             // in the NetworkUtilities class.
             try {
@@ -222,10 +265,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
 
         @Override
-        protected void onPostExecute(final String authToken) {
+        protected void onPostExecute(final WebServiceResponse loginResponse) {
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
             // On a successful authentication, call back into the Activity to
             // communicate the authToken (or null for an error).
-            onAuthenticationResult(authToken);
+            onAuthenticationResult(loginResponse);
         }
 
         @Override

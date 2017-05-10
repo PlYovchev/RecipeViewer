@@ -92,7 +92,7 @@ public class RecipeViewerDatabase {
     }
 
     public void addRecipe(Recipe recipe, Context context){
-        RecipeViewerController controller = RecipeViewerController.Instance();
+        AuthenticationController controller = AuthenticationController.getInstance();
 
         ContentValues valuesRecipe = new ContentValues();
         valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_ID, recipe.getId());
@@ -100,7 +100,7 @@ public class RecipeViewerDatabase {
         valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_TITLE, recipe.getTitle());
         valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_DESCRIPTION, recipe.getDescription());
         valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_RATING, recipe.getRating());
-        valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_USERID, controller.getLoggedUser().getId());
+        valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_USERID, controller.getLastLoggedUsername());
 
         String path = this.saveToInternalSorage(recipe.getRecipeImage(), context, IMAGE_NAME_BASE + recipe.getId());
         valuesRecipe.put(RecipeViewerSqliteHelper.COLUMN_IMAGE_PATH, path);

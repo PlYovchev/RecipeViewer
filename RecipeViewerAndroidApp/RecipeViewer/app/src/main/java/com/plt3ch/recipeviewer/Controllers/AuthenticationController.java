@@ -2,9 +2,14 @@ package com.plt3ch.recipeviewer.Controllers;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -129,11 +134,13 @@ public class AuthenticationController {
         return accounts;
     }
 
+    @WorkerThread
     public boolean verifyLoggedUserIsAuthenticated() {
         RecipesWebServiceController webContoller = new RecipesWebServiceController();
         return webContoller.checkIfLoggedUserTokenIsValid();
     }
 
+    @WorkerThread
     public String getLoggedUserAuthToken() {
         Account account = getLoggedUserAccount();
         if (account == null) {
@@ -142,8 +149,15 @@ public class AuthenticationController {
 
         String authToken = null;
         try {
-            authToken = AccountManager.get(RecipeViewerApplication.getContext())
-                    .blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, false);
+            AccountManager accountManager = AccountManager.get(RecipeViewerApplication.getContext());
+            AccountManagerFuture<Bundle> getAuthTokenTask =  accountManager.getAuthToken(account,
+                    Constants.AUTHTOKEN_TYPE, null, RecipeViewerApplication.getCurrentTopActivity(),
+                    null, null);
+            Bundle bundle = getAuthTokenTask.getResult();
+            authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+//            AccountManager.get(RecipeViewerApplication.getContext()).getAuthToken()
+//            authToken = AccountManager.get(RecipeViewerApplication.getContext())
+//                    .blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, false);
         } catch (OperationCanceledException | IOException | AuthenticatorException e) {
             e.printStackTrace();
         }

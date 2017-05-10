@@ -1,8 +1,10 @@
 package com.plt3ch.recipeviewer;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
@@ -19,16 +21,21 @@ public class RecipeViewerApplication extends Application {
 
     private static Context context;
 
+    private static Activity currentTopActivity;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         RecipeViewerApplication.context = this.getApplicationContext();
+        this.registerActivityLifecycleCallbacks(new RecipeViewerActivityLifecycleCallbacks());
     }
 
     public static Context getContext() {
         return context;
     }
+
+    public static Activity getCurrentTopActivity() { return currentTopActivity; }
 
     public static SharedPreferences getRecipeViewerPreferences() {
         if (context == null) {
@@ -41,4 +48,49 @@ public class RecipeViewerApplication extends Application {
                 SHARED_PREF_NAME, 0);
         return settings;
     }
+
+    private class RecipeViewerActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
+
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            RecipeViewerApplication.currentTopActivity = activity;
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+            clearTopActivityReference(activity);
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            clearTopActivityReference(activity);
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+            clearTopActivityReference(activity);
+        }
+
+        private void clearTopActivityReference(Activity activity) {
+            if (activity != null && activity.equals(RecipeViewerApplication.currentTopActivity)) {
+                RecipeViewerApplication.currentTopActivity = null;
+            }
+        }
+    }
+
 }

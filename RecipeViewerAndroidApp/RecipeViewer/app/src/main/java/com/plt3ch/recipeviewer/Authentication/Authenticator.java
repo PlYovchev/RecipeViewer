@@ -13,6 +13,8 @@ import android.util.Log;
 
 import com.plt3ch.recipeviewer.Constants;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
+import com.plt3ch.recipeviewer.InnerAppModels.RequestState;
+import com.plt3ch.recipeviewer.InnerAppModels.WebServiceResponse;
 import com.plt3ch.recipeviewer.Models.User;
 
 /**
@@ -20,6 +22,10 @@ import com.plt3ch.recipeviewer.Models.User;
  */
 
 public class Authenticator extends AbstractAccountAuthenticator {
+
+    public static final String CREATE_ACCOUNT_TYPE_KEY = "createLocalAccount";
+    public static final String CREATE_LOCAL_ACC = "localAccount";
+    public static final String CREATE_FULL_ACC = "fullAccount";
 
     /** The tag used to log to adb console. **/
     private static final String TAG = "Authenticator";
@@ -34,7 +40,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType,
-                             String authTokenType, String[] requiredFeatures, Bundle options) {
+            String authTokenType, String[] requiredFeatures, Bundle options) {
         Log.v(TAG, "addAccount()");
         final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
@@ -74,9 +80,11 @@ public class Authenticator extends AbstractAccountAuthenticator {
         final AccountManager am = AccountManager.get(mContext);
         final String password = am.getPassword(account);
         if (password != null) {
-            final String authToken =
+            final WebServiceResponse loginResponse =
                     RecipeViewerController.Instance().logUser(new User(account.name, password));
-            if (!TextUtils.isEmpty(authToken)) {
+            String authToken = loginResponse.getResponseValueForKey(WebServiceResponse.AUTH_TOKEN);
+            if (loginResponse.getState() != RequestState.ServiceNotReached
+                    && !TextUtils.isEmpty(authToken)) {
                 final Bundle result = new Bundle();
                 result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
                 result.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
@@ -90,8 +98,8 @@ public class Authenticator extends AbstractAccountAuthenticator {
         // an intent to display our AuthenticatorActivity panel.
         final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
         intent.putExtra(AuthenticatorActivity.PARAM_USERNAME, account.name);
-        intent.putExtra(AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         final Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
         return bundle;

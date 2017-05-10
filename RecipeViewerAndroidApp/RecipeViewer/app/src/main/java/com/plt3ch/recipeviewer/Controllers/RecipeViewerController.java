@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.plt3ch.recipeviewer.FilterByType;
+import com.plt3ch.recipeviewer.InnerAppModels.WebServiceResponse;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
@@ -51,16 +52,9 @@ public class RecipeViewerController {
         recipesWebServiceController.registerUser(user);
     }
 
-    public String logUser(User user){
+    public WebServiceResponse logUser(User user){
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
-        String loginAuthToken = recipesWebServiceController.performLoginUser(user);
-        if(loginAuthToken != null && loginAuthToken.length() > 0){
-            this.setLoggedUser(user);
-            return loginAuthToken;
-        }
-        else {
-            return null;
-        }
+        return recipesWebServiceController.performLoginUser(user);
     }
 
     public void addImage(Bitmap bitmap){

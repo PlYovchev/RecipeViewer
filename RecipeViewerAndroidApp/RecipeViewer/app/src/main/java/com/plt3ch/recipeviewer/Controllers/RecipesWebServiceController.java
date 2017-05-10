@@ -7,6 +7,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.plt3ch.recipeviewer.InnerAppModels.RequestState;
+import com.plt3ch.recipeviewer.InnerAppModels.WebServiceResponse;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.RegisterUser;
@@ -36,6 +38,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -126,7 +129,8 @@ class RecipesWebServiceController {
         return recipes;
     }
 
-    public String performLoginUser(User user){
+    public WebServiceResponse performLoginUser(User user) {
+        WebServiceResponse webResponse = new WebServiceResponse();
         try {
             HashMap<String, String> postDataParms = new HashMap<>();
             postDataParms.put("grant_type", "password");
@@ -135,22 +139,24 @@ class RecipesWebServiceController {
 
             String url = SERVICE_ADDRESS + SERVICE_LOGIN_SUFFIX;
 
-            InputStream result = sendPostUrlEncodedRequestToService(url, postDataParms);
-            if(result != null) {
-                JSONObject jsonObject = transformInputStreamIntoJson(result);
+            Response response = sendPostUrlEncodedRequestToService(url, postDataParms);
+            if(response != null) {
+                JSONObject jsonObject = transformInputStreamIntoJson(response.result);
                 String userId = jsonObject.getString("userId");
                 user.setId(userId);
-                return jsonObject.getString("access_token");
+                webResponse.setResponseValueForKey(WebServiceResponse.AUTH_TOKEN,
+                        !jsonObject.isNull("access_token") ?
+                                jsonObject.getString("access_token") : null);
             }
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (IOException e) {
+            webResponse.setState(RequestState.ServiceNotReached);
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
-        return null;
+        return webResponse;
     }
 
     public List<Recipe> getRecipes() throws IOException {
@@ -234,7 +240,7 @@ class RecipesWebServiceController {
             URL u = new URL(url);
             urlConn = (HttpURLConnection) u.openConnection();
             urlConn.setRequestMethod("GET");
-            urlConn.setRequestProperty("Authorization", authToken);
+            urlConn.setRequestProperty("Authorization", "Bearer " + authToken);
             urlConn.setRequestProperty("Content-Type", "application/json");
             urlConn.setUseCaches(false);
             urlConn.setAllowUserInteraction(false);
@@ -300,36 +306,37 @@ class RecipesWebServiceController {
         return inResponse;
     }
 
-    private InputStream sendPostUrlEncodedRequestToService(String url, HashMap<String, String> postData){
-        InputStream inResponse = null;
-        try {
-            HttpURLConnection urlConn;
-            URL u = new URL (url);
-            urlConn =(HttpURLConnection) u.openConnection();
-            urlConn.setReadTimeout(15000);
-            urlConn.setConnectTimeout(15000);
+    private Response sendPostUrlEncodedRequestToService(String url, HashMap<String, String> postData) throws IOException {
+        HttpURLConnection urlConn;
+        URL u = new URL (url);
+        urlConn =(HttpURLConnection) u.openConnection();
+        urlConn.setReadTimeout(15000);
+        urlConn.setConnectTimeout(15000);
 //            urlConn.setRequestMethod("POST");
-            urlConn.setDoOutput(true);
-            urlConn.setDoInput(true);
-            urlConn.setUseCaches(false);
-            urlConn.setAllowUserInteraction(false);
-            urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            urlConn.setRequestProperty("Accept", "*/*");
-            urlConn.connect();
-            OutputStream os = urlConn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            String dataString = getPostDataString(postData);
-            writer.write(dataString);
-            writer.flush();
-            writer.close();
+        urlConn.setDoOutput(true);
+        urlConn.setDoInput(true);
+        urlConn.setUseCaches(false);
+        urlConn.setAllowUserInteraction(false);
+        urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        urlConn.setRequestProperty("Accept", "*/*");
+        urlConn.connect();
+        OutputStream os = urlConn.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+        String dataString = getPostDataString(postData);
+        writer.write(dataString);
+        writer.flush();
+        writer.close();
 
-            int responseCode = urlConn.getResponseCode();
+        int responseCode = urlConn.getResponseCode();
+        InputStream inResponse = null;
+        if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST) {
             inResponse = urlConn.getInputStream();
-        } catch(Exception e) {
-            e.printStackTrace();
+        } else {
+            /* error from server */
+            inResponse = urlConn.getErrorStream();
         }
 
-        return inResponse;
+        return new Response(responseCode, inResponse);
     }
 
     private InputStream sendImageAsBytesToService(String message, String url, byte[] content){
@@ -387,5 +394,15 @@ class RecipesWebServiceController {
 
         JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
         return jsonObject;
+    }
+
+    private class Response {
+        private int responseCode;
+        private InputStream result;
+
+        public Response(int responseCode, InputStream result) {
+            this.responseCode = responseCode;
+            this.result = result;
+        }
     }
 }
