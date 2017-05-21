@@ -58,11 +58,6 @@ public class MainActivity extends AppCompatActivity {
                             new String[]{Manifest.permission.GET_ACCOUNTS},
                             MY_PERMISSIONS_REQUEST_GET_ACCOUNTS);
                 }
-//                AccountManager.get(MainActivity.this)
-//                        .addAccount(Constants.ACCOUNT_TYPE, Constants.AUTHTOKEN_TYPE, null, null,
-//                                MainActivity.this, null, null);
-//                Intent intentToLoginActivity = new Intent(getBaseContext(), LoginActivity.class);
-//                startActivity(intentToLoginActivity);
             }
         });
     }

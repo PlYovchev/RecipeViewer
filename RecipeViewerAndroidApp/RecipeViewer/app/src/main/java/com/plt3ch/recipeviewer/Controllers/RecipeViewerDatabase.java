@@ -118,12 +118,12 @@ public class RecipeViewerDatabase {
     }
 
     public List<Recipe> getSavedRecipeForCurrentUser(){
-        RecipeViewerController controller = RecipeViewerController.Instance();
-        User user = controller.getLoggedUser();
+        AuthenticationController authController = AuthenticationController.getInstance();
+        String username = authController.getLastLoggedUsername();
         List<Recipe> recipes = new ArrayList<>();
 
         Cursor cursor = database.query(RecipeViewerSqliteHelper.TABLE_RECIPES,
-                null, RecipeViewerSqliteHelper.COLUMN_USERID + " like '" + user.getId() + "'", null,
+                null, RecipeViewerSqliteHelper.COLUMN_USERID + " like '" + username + "'", null,
                 null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

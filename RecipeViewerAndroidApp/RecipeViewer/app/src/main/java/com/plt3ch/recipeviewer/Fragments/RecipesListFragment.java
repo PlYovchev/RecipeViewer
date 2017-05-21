@@ -168,18 +168,6 @@ public class RecipesListFragment extends ListFragment {
         intent.putExtra(SELECTED_ITEM_KEY, position);
         intent.putExtra(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY, this.showSavedRecipes);
         getActivity().startActivity(intent);
-//        RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(SELECTED_ITEM_KEY, position);
-//        args.putBoolean(RecipesMainActivity.NAVIGATE_TO_SAVED_RECIPES_KEY, this.showSavedRecipes);
-//        recipeDetailsFragment.setArguments(args);
-//
-//        FragmentManager fragmentManager = getFragmentManager();
-//        FragmentTransaction ft = fragmentManager.beginTransaction();
-//        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-//        ft.replace(R.id.container, recipeDetailsFragment);
-//        ft.addToBackStack(null);
-//        ft.commit();
     }
 
     private class DownloadRecipes extends AsyncTask <String, Void, List<Recipe>> {

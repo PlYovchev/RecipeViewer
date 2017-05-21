@@ -26,7 +26,6 @@ public class RecipeViewerController {
     private HashMap<String, ArrayList<String>> filterDictionary;
     private FilterByType filterByType;
     private String lastFilterValue;
-    private User loggedUser;
 
     private static RecipeViewerController recipeViewerController;
 
@@ -135,13 +134,5 @@ public class RecipeViewerController {
 
     public void setLastFilterValue(String lastFilterValue) {
         this.lastFilterValue = lastFilterValue;
-    }
-
-    public User getLoggedUser() {
-        return loggedUser;
-    }
-
-    public void setLoggedUser(User loggedUser) {
-        this.loggedUser = loggedUser;
     }
 }

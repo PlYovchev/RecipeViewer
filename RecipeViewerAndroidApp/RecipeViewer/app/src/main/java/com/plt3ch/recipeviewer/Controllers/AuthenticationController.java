@@ -164,14 +164,4 @@ public class AuthenticationController {
 
         return authToken;
     }
-
-    public Account findExistingAccountToLogWith() {
-        return null;
-    }
-
-    private void login() {
-
-    }
-
-
 }

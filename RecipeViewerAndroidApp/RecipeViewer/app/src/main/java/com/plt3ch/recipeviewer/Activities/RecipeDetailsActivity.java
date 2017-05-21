@@ -3,7 +3,6 @@ package com.plt3ch.recipeviewer.Activities;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Rating;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -18,16 +17,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.plt3ch.recipeviewer.Adapters.IngredientsAdapter;
+import com.plt3ch.recipeviewer.Controllers.AuthenticationController;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerDatabase;
-import com.plt3ch.recipeviewer.Fragments.RecipeDetailsFragment;
 import com.plt3ch.recipeviewer.Fragments.RecipesListFragment;
 import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
@@ -35,7 +32,6 @@ import com.plt3ch.recipeviewer.Models.UserFeedback;
 import com.plt3ch.recipeviewer.R;
 import com.plt3ch.recipeviewer.ViewConfigureStrategies.IngredientViewStrategy;
 import com.plt3ch.recipeviewer.ViewConfigureStrategies.RecipeDetailsViewStrategy;
-import com.plt3ch.recipeviewer.ViewConfigureStrategies.RecipiesViewStrategy;
 
 import java.io.IOException;
 import java.util.List;
@@ -159,7 +155,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                         feedback.setComment(commentText.getText().toString());
                         feedback.setRating(Math.round(userRecipeRating.getRating()));
                         feedback.setRecipeId(selectedRecipe.getId());
-                        feedback.setUserId(RecipeViewerController.Instance().getLoggedUser().getId());
+                        feedback.setUserId(AuthenticationController.getInstance()
+                                .getLastLoggedUsername());
 
                         new Thread(new Runnable() {
                             @Override

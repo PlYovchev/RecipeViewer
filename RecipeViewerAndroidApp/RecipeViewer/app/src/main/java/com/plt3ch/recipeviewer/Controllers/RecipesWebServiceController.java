@@ -200,11 +200,6 @@ class RecipesWebServiceController {
         return ingredients;
     }
 
-    public List<Recipe> getRecipesByUser(User user){
-
-        return null;
-    }
-
     public boolean addImage(Bitmap bitmap){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
