@@ -33,16 +33,17 @@ import com.plt3ch.recipeviewer.Models.Ingredient;
 import com.plt3ch.recipeviewer.Models.Recipe;
 import com.plt3ch.recipeviewer.Models.UserFeedback;
 import com.plt3ch.recipeviewer.R;
+import com.plt3ch.recipeviewer.ViewConfigureStrategies.IngredientViewStrategy;
 import com.plt3ch.recipeviewer.ViewConfigureStrategies.RecipeDetailsViewStrategy;
 import com.plt3ch.recipeviewer.ViewConfigureStrategies.RecipiesViewStrategy;
 
 import java.io.IOException;
 import java.util.List;
 
-
 public class RecipeDetailsActivity extends AppCompatActivity {
 
     private RecipeDetailsViewStrategy detailsViewStrategy;
+    private IngredientViewStrategy ingredientssViewStrategy;
     private Recipe selectedRecipe;
     private Boolean isSavedList;
 
@@ -68,24 +69,18 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(RecipeDetailsActivity.this, null);
-//                RecipeDetailsActivity.this.startActivity(intent);
-                ProgressDialog progressDialog = ProgressDialog.show(RecipeDetailsActivity.this,
-                        "Save!", "Saving...", true);
+            RecipeViewerController controller = RecipeViewerController.Instance();
+            List<Recipe> recipes = controller.getRecipes();
 
-                RecipeViewerDatabase database = new RecipeViewerDatabase(RecipeDetailsActivity.this);
-                database.open();
-                database.addRecipe(selectedRecipe, RecipeDetailsActivity.this);
-                database.close();
-
-                progressDialog.cancel();
-                Toast.makeText(RecipeDetailsActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(RecipeDetailsActivity.this, RecipeStepsActivity.class);
+            intent.putExtra(RecipesListFragment.SELECTED_ITEM_KEY, recipes.indexOf(selectedRecipe));
+            RecipeDetailsActivity.this.startActivity(intent);
             }
         });
 
-        if (isSavedList) {
-            fab.setVisibility(View.GONE);
-        }
+//        if (this.isSavedList) {
+//            fab.setVisibility(View.GONE);
+//        }
 
         TextView ingredientsTextButton = (TextView) findViewById(R.id.ingredientsTextButton);
         TableLayout ingredientsTable = (TableLayout) findViewById(R.id.ingredientsTable);
@@ -93,10 +88,13 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.recipe_details_toolbar_layout);
         TextView recipeDescriptionView = (TextView) findViewById(R.id.recipeShortDescription);
 
+        this.ingredientssViewStrategy = new IngredientViewStrategy(this,
+                ingredientsTable, ingredientsTextButton);
+        this.ingredientssViewStrategy.configureIngredientsTextButton();
+
         this.detailsViewStrategy = new RecipeDetailsViewStrategy(this,
-                ingredientsTable, ingredientsTextButton, recipeDetailsToolbarLayout, recipeDescriptionView);
-        detailsViewStrategy.configureIngredientsTextButton();
-        detailsViewStrategy.configureRecipeDescriptionAndImageView(selectedRecipe);
+                recipeDetailsToolbarLayout, recipeDescriptionView);
+        this.detailsViewStrategy.configureRecipeDescriptionAndImageView(selectedRecipe);
 
         new DownloadIngredientsForRecipeFromService().execute();
     }
@@ -105,6 +103,10 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_recipe_details, menu);
+        if (this.isSavedList) {
+            MenuItem saveActionItem = menu.findItem(R.id.action_save);
+            saveActionItem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -118,8 +120,24 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             case R.id.action_add_comment:
                 showAddCommentDialog();
                 return true;
+            case R.id.action_save:
+                saveRecipeDetails();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveRecipeDetails() {
+        ProgressDialog progressDialog = ProgressDialog.show(RecipeDetailsActivity.this,
+                "Save!", "Saving...", true);
+
+        RecipeViewerDatabase database = new RecipeViewerDatabase(RecipeDetailsActivity.this);
+        database.open();
+        database.addRecipe(selectedRecipe, RecipeDetailsActivity.this);
+        database.close();
+
+        progressDialog.cancel();
+        Toast.makeText(RecipeDetailsActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
     }
 
     private void showAddCommentDialog() {
@@ -181,7 +199,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Ingredient> ingredients) {
             selectedRecipe.setIngredientList(ingredients);
-            detailsViewStrategy.configureIngredientsTable(selectedRecipe);
+            ingredientssViewStrategy.configureIngredientsTable(selectedRecipe);
         }
     }
 }

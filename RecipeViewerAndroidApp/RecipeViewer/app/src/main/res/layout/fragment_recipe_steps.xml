@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_recipe_steps"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context="com.plt3ch.recipeviewer.Fragments.RecipeStepsActivityFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/stepScrollView">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@string/stepLabelFormatter"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:id="@+id/stepNumberText"
+                android:textSize="28sp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_below="@+id/stepNumberText"
+                android:layout_marginTop="8dp"
+                android:id="@+id/stepImage" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/stepImage"
+                android:id="@+id/ingredientsLayout">
+
+                <TextView
+                    android:id="@+id/ingredientsTextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:drawableLeft="@android:drawable/ic_input_add"
+                    android:background="?attr/colorButtonNormal"
+                    android:drawablePadding="5dp"
+                    android:maxLines="1"
+                    android:clickable="true"
+                    android:text="Ingredients" />
+
+                <include layout="@layout/ingredients_table"
+                    android:id="@+id/ingredientsTable"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+            <TextView
+                android:text="@string/large_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ingredientsLayout"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:id="@+id/stepDescription" />
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

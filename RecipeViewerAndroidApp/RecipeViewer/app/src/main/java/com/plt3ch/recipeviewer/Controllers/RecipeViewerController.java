@@ -62,10 +62,11 @@ public class RecipeViewerController {
         recipesWebServiceController.addImage(bitmap);
     }
 
-    public void fetchRecipesFilterByTypeWithValue(String value) throws IOException {
+    public List<Recipe> fetchRecipesFilterByTypeWithValue(String value) throws IOException {
         RecipesWebServiceController recipesWebServiceController = new RecipesWebServiceController();
         this.recipes = recipesWebServiceController.getFilteredRecipes(this.filterByType.toString(), value);
         setLastFilterValue(value);
+        return this.recipes;
     }
 
     public void fetchRecipesFromDatabase(Context context){

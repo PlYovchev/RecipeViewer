@@ -10,6 +10,6 @@
     <color name="orange5">#ffe58a34</color>
     <color name="blue2">#e1f6e1</color>
     <color name="blue25">#e1f6e1</color>
-    <color name="list_background">#ff828597</color>
+    <color name="list_background">#828597</color>
     <color name="list_background_pressed">#992416</color>
 </resources>

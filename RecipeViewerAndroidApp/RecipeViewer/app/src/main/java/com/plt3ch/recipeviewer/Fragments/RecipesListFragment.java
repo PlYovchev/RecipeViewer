@@ -184,11 +184,36 @@ public class RecipesListFragment extends ListFragment {
 
     private class DownloadRecipes extends AsyncTask <String, Void, List<Recipe>> {
 
-        private boolean haveRetrievalFailed = false;
+        private boolean retrievalFailed = false;
+
+        @Override
+        protected List<Recipe> doInBackground(String... params) {
+            RecipeViewerController controller = RecipeViewerController.Instance();
+            List<Recipe> recipes = null;
+            if (RecipesListFragment.this.showSavedRecipes) {
+                controller.fetchRecipesFromDatabase(getActivity());
+                recipes = controller.getRecipes();
+            } else {
+                try {
+                    String filterValue = params[0];
+                    recipes = controller.fetchRecipesFilterByTypeWithValue(filterValue);
+                    if (recipes == null) {
+                        return null;
+                    }
+                    for (Recipe recipe : recipes) {
+                        recipe.setRecipeImage(controller.downloadImageByUrl(recipe.getImageUrl()));
+                    }
+                } catch (IOException e) {
+                    retrievalFailed = true;
+                }
+            }
+
+            return recipes;
+        }
 
         @Override
         protected void onPostExecute(List<Recipe> recipes) {
-            if (haveRetrievalFailed) {
+            if (retrievalFailed) {
                 RecipesListFragment.this.showSavedRecipes = true;
                 new DownloadRecipes().execute("");
                 return;
@@ -196,30 +221,6 @@ public class RecipesListFragment extends ListFragment {
 
             RecipesAdapter recipesAdapter = new RecipesAdapter(getActivity(), recipes);
             setListAdapter(recipesAdapter);
-        }
-
-        @Override
-        protected List<Recipe> doInBackground(String... params) {
-            RecipeViewerController controller = RecipeViewerController.Instance();
-            List<Recipe> recipes = null;
-            if(RecipesListFragment.this.showSavedRecipes){
-                controller.fetchRecipesFromDatabase(getActivity());
-                recipes = controller.getRecipes();
-            }
-            else{
-                try {
-                    String filterValue = params[0];
-                    controller.fetchRecipesFilterByTypeWithValue(filterValue);
-                    recipes = controller.getRecipes();
-                    for (Recipe recipe : recipes){
-                        recipe.setRecipeImage(controller.downloadImageByUrl(recipe.getImageUrl()));
-                    }
-                } catch (IOException e) {
-                    haveRetrievalFailed = true;
-                }
-            }
-
-            return recipes;
         }
     }
 }

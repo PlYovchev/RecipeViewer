@@ -161,5 +161,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="title_activity_recipe_steps">RecipeStepsActivity</string>
+    <string name="stepLabelFormatter">Step %d</string>
 
 </resources>
