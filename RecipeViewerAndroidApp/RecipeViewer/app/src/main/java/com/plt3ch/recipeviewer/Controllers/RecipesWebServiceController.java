@@ -52,9 +52,9 @@ class RecipesWebServiceController {
 
     private static final String TAG = "RVWebController";
 
-    private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
+//    private static final String SERVICE_ADDRESS = "http://192.168.1.104:18888";
 //    private static final String SERVICE_ADDRESS = "http://192.168.137.1:18888";
-//    private static final String SERVICE_ADDRESS = "http://192.168.43.110:18888";
+    private static final String SERVICE_ADDRESS = "http://192.168.43.110:18888";
 
     private static final String SERVICE_LOGIN_SUFFIX = "/Token";
     private static final String SERVICE_REGISTER_SUFFIX = "/api/Account/Register";

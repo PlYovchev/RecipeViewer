@@ -60,7 +60,9 @@ public class RecipesAdapter extends BaseAdapter{
 
         recipeImage.setImageBitmap(currentRecipe.getScaledRecipeImage());
         txtTitle.setText(currentRecipe.getTitle());
-        txtAuthor.setText("by " + currentRecipe.getAuthorUserName());
+        String authorName = currentRecipe.getAuthorUserName() != null
+                ? currentRecipe.getAuthorUserName() : "Anonymous";
+        txtAuthor.setText("by " + authorName);
         recipeRatingBar.setRating(currentRecipe.getRating());
 
         return convertView;

@@ -53,15 +53,4 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="at date"
-        android:id="@+id/publishDateTextView"
-        android:layout_alignTop="@+id/authorTextView"
-        android:layout_toRightOf="@+id/authorTextView"
-        android:layout_toEndOf="@+id/authorTextView"
-        android:layout_marginLeft="10dp"/>
-
 </com.plt3ch.recipeviewer.ActivatedRelativeLayout>

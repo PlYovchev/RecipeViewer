@@ -20,6 +20,9 @@ import com.plt3ch.recipeviewer.R;
 public class RecipesMainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    public final static String NAVIGATE_TO_SAVED_RECIPES_KEY = "savedRecipesKey";
+    public final static String WORK_OFFLINE_KEY = "workOffline";
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -30,8 +33,6 @@ public class RecipesMainActivity extends AppCompatActivity
      */
     private CharSequence mTitle;
 
-    public final static String NAVIGATE_TO_SAVED_RECIPES_KEY = "savedRecipesKey";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +40,6 @@ public class RecipesMainActivity extends AppCompatActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -54,7 +54,7 @@ public class RecipesMainActivity extends AppCompatActivity
         // update the main content by replacing fragments
         RecipesListFragment listFragment = new RecipesListFragment();
         Bundle args = new Bundle();
-        if(position == 1){
+        if(position == 1 || workOffline()){
             args.putBoolean(NAVIGATE_TO_SAVED_RECIPES_KEY, true);
         }
         else{
@@ -71,9 +71,14 @@ public class RecipesMainActivity extends AppCompatActivity
     }
 
     public void onSectionAttached(int number) {
-        String[] navigationDrawerItems = getResources().getStringArray(R.array.navigation_drawer_items);
-
-        mTitle = navigationDrawerItems[number];
+        String[] navigationDrawerItems = getResources()
+                .getStringArray(R.array.navigation_drawer_items);
+        if (workOffline()) {
+            mTitle = navigationDrawerItems[1];
+        } else {
+            mTitle = navigationDrawerItems[number];
+        }
+        restoreActionBar();
     }
 
     public void restoreActionBar() {
@@ -82,6 +87,11 @@ public class RecipesMainActivity extends AppCompatActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
+
+    public boolean workOffline() {
+        return getIntent().getBooleanExtra(WORK_OFFLINE_KEY, false);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,8 +136,7 @@ public class RecipesMainActivity extends AppCompatActivity
             return fragment;
         }
 
-        public PlaceholderFragment() {
-        }
+        public PlaceholderFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,

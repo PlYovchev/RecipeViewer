@@ -32,7 +32,8 @@ public class RecipeViewerDatabase {
 
     private static final String IMAGE_NAME_BASE = "imageForRecipeWithId";
 
-    private class RecipeViewerSqliteHelper extends SQLiteOpenHelper{
+    private class RecipeViewerSqliteHelper extends SQLiteOpenHelper {
+
         private static final String TABLE_RECIPES = "recipes";
         private static final String COLUMN_ID = "_id";
         private static final String COLUMN_TITLE = "title";
@@ -91,7 +92,7 @@ public class RecipeViewerDatabase {
         this.database.close();
     }
 
-    public void addRecipe(Recipe recipe, Context context){
+    public void addRecipe(Recipe recipe, Context context) {
         AuthenticationController controller = AuthenticationController.getInstance();
 
         ContentValues valuesRecipe = new ContentValues();
@@ -117,7 +118,7 @@ public class RecipeViewerDatabase {
         }
     }
 
-    public List<Recipe> getSavedRecipeForCurrentUser(){
+    public List<Recipe> getSavedRecipeForCurrentUser() {
         AuthenticationController authController = AuthenticationController.getInstance();
         String username = authController.getLastLoggedUsername();
         List<Recipe> recipes = new ArrayList<>();

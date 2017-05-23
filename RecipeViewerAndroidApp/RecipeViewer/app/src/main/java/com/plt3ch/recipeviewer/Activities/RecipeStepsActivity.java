@@ -6,7 +6,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
 import com.plt3ch.recipeviewer.Fragments.RecipeStepsActivityFragment;
@@ -18,8 +21,10 @@ import java.util.List;
 
 public class RecipeStepsActivity extends AppCompatActivity {
 
-    private int currentStepNumber = 0;
+    private static final int MIN_DISTANCE = 300;
 
+    private float x1,x2;
+    private int currentStepNumber = 0;
     private Recipe selectedRecipe;
 
     private FloatingActionButton fabForward;
@@ -33,6 +38,8 @@ public class RecipeStepsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         extractDataFromBundle();
+
+        FrameLayout stepFrameLayout = (FrameLayout) findViewById(R.id.stepFragment);
 
         getSupportActionBar().setTitle(this.selectedRecipe.getTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,14 +56,20 @@ public class RecipeStepsActivity extends AppCompatActivity {
         fabBackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.popBackStack();
-                currentStepNumber--;
-                manageFabButtonsVisibility();
+            backStepWorkflow();
             }
         });
 
         nextStepWorkflow();
+    }
+
+    private void backStepWorkflow() {
+        if (currentStepNumber > 1) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.popBackStack();
+            currentStepNumber--;
+            manageFabButtonsVisibility();
+        }
     }
 
     private void nextStepWorkflow() {
@@ -102,4 +115,24 @@ public class RecipeStepsActivity extends AppCompatActivity {
         this.selectedRecipe = recipes.get(selectedItemIndex);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (Math.abs(deltaX) > MIN_DISTANCE) {
+                    if (x2 > x1) {
+                        backStepWorkflow();
+                    } else {
+                        nextStepWorkflow();
+                    }
+                }
+                break;
+        }
+        return super.dispatchTouchEvent(event);
+    }
 }

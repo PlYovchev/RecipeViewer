@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.plt3ch.recipeviewer.Activities.RecipesMainActivity;
 import com.plt3ch.recipeviewer.R;
 
 /**
@@ -60,6 +61,7 @@ public class NavigationDrawerFragment extends Fragment {
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+    private boolean mWorkOffline;
 
     public NavigationDrawerFragment() {
     }
@@ -100,11 +102,20 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+
+        this.mWorkOffline = getActivity().getIntent()
+                .getBooleanExtra(RecipesMainActivity.WORK_OFFLINE_KEY, false);
+        String[] drawerItems = getResources().getStringArray(R.array.navigation_drawer_items);
+        if (this.mWorkOffline) {
+            String savedRecipiesLabel = drawerItems[1];
+            drawerItems = new String[] { savedRecipiesLabel };
+        }
+
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                getResources().getStringArray(R.array.navigation_drawer_items)));
+                drawerItems));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }

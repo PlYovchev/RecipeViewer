@@ -1,5 +1,6 @@
 package com.plt3ch.recipeviewer.Fragments;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,9 +18,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 
+import com.plt3ch.recipeviewer.Activities.MainActivity;
 import com.plt3ch.recipeviewer.Activities.RecipeDetailsActivity;
 import com.plt3ch.recipeviewer.Activities.RecipesMainActivity;
 import com.plt3ch.recipeviewer.Adapters.RecipesAdapter;
+import com.plt3ch.recipeviewer.Controllers.AuthenticationController;
 import com.plt3ch.recipeviewer.Controllers.RecipeViewerController;
 import com.plt3ch.recipeviewer.Dialogs.ConfigureSearchDialog;
 import com.plt3ch.recipeviewer.FilterByType;
@@ -154,6 +157,21 @@ public class RecipesListFragment extends ListFragment {
                 return true;
             case R.id.action_filterby_rating:
                 controller.setFilterByType(FilterByType.Rating);
+                return true;
+            case R.id.action_logout:
+                AuthenticationController.getInstance().clearLoggedUserInformation();
+                Intent mainIntent = new Intent(getActivity(), MainActivity.class);
+                startActivity(mainIntent);
+                getActivity().finish();
+                return true;
+            case R.id.action_complete_logout:
+                AccountManager.get(getActivity()).removeAccount(
+                        AuthenticationController.getInstance().getLoggedUserAccount(), null, null);
+                AuthenticationController.getInstance().clearLoggedUserInformation();
+
+                Intent mainAfterCompleteLogoutIntent = new Intent(getActivity(), MainActivity.class);
+                startActivity(mainAfterCompleteLogoutIntent);
+                getActivity().finish();
                 return true;
         }
 

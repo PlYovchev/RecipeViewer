@@ -183,6 +183,10 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         @Override
         protected List<Ingredient> doInBackground(Void... params) {
+            if (isSavedList) {
+                return selectedRecipe.getIngredientList();
+            }
+
             try {
                 RecipeViewerController controller = RecipeViewerController.Instance();
                 return controller.getIngredientsForRecipeWithId(selectedRecipe.getId());

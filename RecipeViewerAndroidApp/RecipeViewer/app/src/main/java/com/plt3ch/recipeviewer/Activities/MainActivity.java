@@ -7,8 +7,11 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -65,8 +68,15 @@ public class MainActivity extends AppCompatActivity {
     private void tryLoginWithExistingAccount() {
         Account account = mAuthenticationController.getLoggedUserAccount();
         if (account != null) {
-            new ValidateAuthTokenTask().execute();
-            return;
+            if (isNetworkAvailable()) {
+                new ValidateAuthTokenTask().execute();
+                return;
+            } else {
+                Intent recipiesMainIntent = new Intent(MainActivity.this, RecipesMainActivity.class);
+                recipiesMainIntent.putExtra(RecipesMainActivity.WORK_OFFLINE_KEY, true);
+                startActivity(recipiesMainIntent);
+                finish();
+            }
         }
 
         if (account == null) {
@@ -82,13 +92,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void promtUserToSelectAccount() {
-
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_GET_ACCOUNTS: {
@@ -96,21 +102,17 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     tryLoginWithExistingAccount();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
+    }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -180,8 +182,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (isTokenValid) {
-                Intent intentToLoginActivity = new Intent(MainActivity.this, RecipesMainActivity.class);
-                startActivity(intentToLoginActivity);
+                Intent recipiesMainIntent = new Intent(MainActivity.this, RecipesMainActivity.class);
+                startActivity(recipiesMainIntent);
+                finish();
             }
         }
     }
@@ -234,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
             if (isTokenValid) {
                 Intent intentToLoginActivity = new Intent(MainActivity.this, RecipesMainActivity.class);
                 startActivity(intentToLoginActivity);
+                finish();
             }
         }
     }
